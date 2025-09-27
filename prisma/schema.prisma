@@ -1,0 +1,76 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id           String    @id @default(uuid())
+    email        String    @unique
+    password     String
+    name         String?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+    files        File[]    // files owned by user
+    permissions  FilePermission[]
+    sessions     Session[]
+}
+
+model File {
+    id          String         @id @default(uuid())
+    ownerId     String
+    fileName    String
+    fileKey     String
+    mimeType    String
+    sizeBytes   Int
+    isFolder    Boolean        @default(false)
+    parentId    String?        // self-reference for folders
+    parent      File?          @relation("FolderChildren", fields: [parentId], references: [id])
+    createdAt   DateTime       @default(now())
+    updatedAt   DateTime       @updatedAt
+    owner       User           @relation(fields: [ownerId], references: [id])
+    children    File[]         @relation("FolderChildren")
+    permissions FilePermission[]
+    shareLinks  ShareLink[]
+}
+
+model FilePermission {
+    id          String   @id @default(uuid())
+    fileId      String
+    userId      String
+    permission  PermissionLevel
+    expiresAt   DateTime?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    file        File     @relation(fields: [fileId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
+}
+
+model ShareLink {
+    id          String   @id @default(uuid())
+    fileId      String
+    token       String   @unique
+    expiresAt   DateTime?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    file        File     @relation(fields: [fileId], references: [id])
+}
+
+model Session {
+    id           String   @id @default(uuid())
+    userId       String
+    refreshToken String
+    expiresAt    DateTime
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    user         User     @relation(fields: [userId], references: [id])
+}
+
+enum PermissionLevel {
+    READ
+    WRITE
+    OWNER
+}
