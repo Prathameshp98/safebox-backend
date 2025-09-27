@@ -1,0 +1,41 @@
+node_modules/
+.env
+.env.local
+.env.production
+.env.prod
+.env.example
+coverage/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+.DS_Store
+.vscode/settings.json
+.idea/
+*.tgz
+*.tar.gz
+dist/
+PRODUCTION-SUMMARY.md
+
+# Docker
+.dockerignore
+
+# Temporary files
+tmp/
+temp/
+
+# Scripts
+launch-ec2.sh
+server-setup.sh
+deploy-docker.sh
+setup-nginx.sh
+setup-s3-production.sh
+DEPLOYMENT-GUIDE.md
+Dockerfile.prod
+install-node.sh
+tactical-edge-key.pem
+install-docker.sh
+install-nginx.sh
+instance-info.txt
